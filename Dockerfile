@@ -1,6 +1,9 @@
-FROM rocker/tidyverse
+FROM ubuntu:ubuntu:20.04 AS rocker
 
-## Install common dependencies
+RUN apt-get update && apt-get install -y 
+
+FROM rocker/tidyverse 
+
 RUN apt-get update && apt-get install -y  \
     sudo \
     gdebi-core \
@@ -50,8 +53,6 @@ RUN cp -R /usr/local/lib/R/site-library/shiny/examples/* /home/rstudio/ShinyApps
 EXPOSE 3838 8787
 
 # COPY src/shiny-server.sh /usr/bin/shiny-server.sh
-# RUN wget --no-verbos https://raw.githubusercontent.com/sbg/sevenbridges-r/master/inst/docker/sevenbridges/src/shiny-server.conf -P /etc/shiny-server/
-# RUN wget --no-verbos https://raw.githubusercontent.com/sbg/sevenbridges-r/master/inst/docker/sevenbridges/src/supervisord.conf    -P /etc/shiny-server/
 COPY src/shiny-server.conf  /etc/shiny-server/shiny-server.conf
 COPY src/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
