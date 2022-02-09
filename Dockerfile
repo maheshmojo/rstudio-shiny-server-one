@@ -1,4 +1,4 @@
-FROM ubuntu:ubuntu:20.04 AS rocker
+FROM ubuntu:20.04 AS rocker
 
 RUN apt-get update && apt-get install -y 
 
