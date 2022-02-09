@@ -1,8 +1,6 @@
-FROM ubuntu:20.04 AS rocker
+FROM ubuntu:20.04
 
-RUN apt-get update && apt-get install -y 
-
-FROM rocker/tidyverse 
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y  \
     sudo \
@@ -17,23 +15,9 @@ RUN apt-get update && apt-get install -y  \
     emacs \
     supervisor \
     libfuse-dev \
-    gnupg
-#   aufs-tools \
-#   cgroupfs-mount
+    gnupg \
+    wget
 
-# RUN wget --no-verbose http://ftp.us.debian.org/debian/pool/main/l/lvm2/libdevmapper1.02.1_1.02.136-1_amd64.deb && \
-#    dpkg -i libdevmapper1.02.1_1.02.136-1_amd64.deb && \
-#    rm -f libdevmapper1.02.1_1.02.136-1_amd64.deb
-
-# RUN wget --no-verbose http://ftp.us.debian.org/debian/pool/main/libt/libtool/libltdl7_2.4.6-2_amd64.deb && \
-#    dpkg -i libltdl7_2.4.6-2_amd64.deb && \
-#    rm -f libltdl7_2.4.6-2_amd64.deb
-
-################
-# Shiny Server #
-################
-
-## Thanks: rocker-org/shiny
 
 ## Download and install Shiny Server
 RUN wget --no-verbose https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION -O "version.txt" && \
@@ -42,13 +26,8 @@ RUN wget --no-verbose https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubu
     gdebi -n shiny-server-latest.deb && \
     rm -f version.txt shiny-server-latest.deb
 
-RUN Rscript -e "install.packages(c('shiny', 'rmarkdown', 'rsconnect'), repos = 'https://cloud.r-project.org/')"
 
-RUN cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/
-
-RUN mkdir /home/rstudio/ShinyApps/
-
-RUN cp -R /usr/local/lib/R/site-library/shiny/examples/* /home/rstudio/ShinyApps/
+CMD R -e "install.packages(c('shiny', 'rmarkdown', 'rsconnect'), repos = 'https://cloud.r-project.org/')"
 
 EXPOSE 3838 8787
 
